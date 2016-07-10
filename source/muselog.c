@@ -1,5 +1,5 @@
 /*---------------------------------------------
- *     modification time: 2016-07-08 16:03:45
+ *     modification time: 2016-07-10 21:10:00
  *     mender: Muse
 -*---------------------------------------------*/
 
@@ -32,60 +32,89 @@
  *          Part Four: Log control
  *
  *          1. log_start
- *          2. log
+ *          2. flog
  *          3. vlog
  *          4. log_move
  *
 -*---------------------------------------------*/
 
 /*-----log_start-----*/
-bool log_start(Muselog *log, int facility)
+bool log_start(Muselog *log, const char *logname, int facility)
 {
-    if (!log) {
+    if (!log || !logname) {
         errno = EINVAL;
         return  false;
     }
 
     log->facility = facility;
+    snprintf(log->logname, LOGNAME_LEN, logname);
 
-    openlog(NULL, LOG_OPTION, LOG_USER);
+    openlog(NULL, LOG_OPTION, facility);
+
+    return  true;
+}
+
+
+/*-----flog-----*/
+bool flog(Muselog *log, int level, const char *fmt, ...)
+{
+    if (!log || !fmt) {
+        errno = EINVAL;
+        return  false;
+    }
+
+    va_list ap;
+
+    va_start(ap, fmt);
+    vsyslog(log->facility | level, fmt, ap);
+
+    return  true;
+}
+
+
+/*-----vlog-----*/
+bool vlog(Muselog *log, int level, const char *fmt, va_list ap)
+{
+    if (!log || !fmt) {
+        errno = EINVAL;
+        return  false;
+    }
+
+    vsyslog(log->facility | level, fmt, ap);
 
     return  true;
 }
 
 
 /*-----log_move-----*/
-bool log_move(const char *log, const char *dir, const char *name)
+bool log_move(Muselog *log, const char *save, int size)
 {
-    if (!log || !dir || !name) {
+    if (!log || !save) {
         errno = EINVAL;
         return  false;
     }
 
-    char    buffer[MFILEN_LEN];
-
-    snprintf(buffer, MFILEN_LEN - 1, "%s%s", 
-        (dir) ? dir : DEF_DIR, (name) ? name : DEF_LOGNAME);
-
-    int32_t out = open(buffer, O_RDONLY);
-    int32_t in = open(log, O_WRONLY); 
+    int32_t out = open(save, O_WRONLY | O_CREAT);
+    int32_t in = open(log->logname, O_RDWR); 
 
     if (out == -1 || in == -1)
         return  false;
 
     struct stat stats;
 
-    if (fstat(out, &stats) == -1)
+    if (fstat(in, &stats) == -1)
         return  false;
 
     if (sendfile(out, in, NULL, stats.st_size) == -1)
         return  false;
 
-    close(out);
-    close(in);
+    if (size > -1) {
+        if (ftruncate(in, size) == -1)
+            return  false;
+    }
 
-    if (truncate(buffer, 0) == -1)
-        return  false;
+    close(out);
+    close(in); 
 
     return  true;
 }   

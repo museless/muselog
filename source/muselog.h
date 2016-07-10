@@ -1,5 +1,5 @@
 /*---------------------------------------------
- *     modification time: 2016-07-08 16:01:13
+ *     modification time: 2016-07-10 13:15:00
  *     mender: Muse
 -*---------------------------------------------*/
 
@@ -10,14 +10,13 @@
 -*---------------------------------------------*/
 
 /*---------------------------------------------
- *       Source file content Four part
+ *       Source file content Five part
  *
  *       Part Zero:  Include
  *       Part One:   Define
  *       Part Two:   Typedef
  *       Part Three: Struct 
- *
- *       Part Three: 
+ *       Part Four:  Function 
  *
 -*---------------------------------------------*/
 
@@ -25,28 +24,39 @@
  *             Part Zero: Include
 -*---------------------------------------------*/
 
+#include <stdio.h>
 #include <stdbool.h>
+#include <stdarg.h>
 #include <string.h>
 
 #include <errno.h>
-#include <time.h>
 #include <syslog.h>
+
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/sendfile.h>
+
+#include <unistd.h>
+#include <fcntl.h>
 
 
 /*---------------------------------------------
  *             Part One: Define
 -*---------------------------------------------*/
 
-#define DEF_LOGNAME "Muselog"
-#define DEF_DIR     "/var/log/"
+#define DEF_LOGNAME "/var/log/Muselog"
+#define LOGNAME_LEN 0xFC
 
-#define MFILEN_LEN  0x200
-
-#ifdef MDEBUG
-#define LOG_OPTION  (LOG_PERROR | LOG_CONS)
-#else
 #define LOG_OPTION  (LOG_CONS)
-#endif
+
+#define EMERG       LOG_EMERG
+#define ALERT       LOG_ALERT
+#define CRIT        LOG_CRIT
+#define ERR         LOG_ERR
+#define WARN        LOG_WARNING
+#define NOTI        LOG_NOTICE
+#define INFO        LOG_INFO
+#define DEBUG       LOG_DEBUG
 
 
 /*---------------------------------------------
@@ -61,7 +71,18 @@ typedef struct muselog  Muselog;
 -*---------------------------------------------*/
 
 struct muselog {
+    char    logname[LOGNAME_LEN];
     int32_t facility;
 };
+
+
+/*---------------------------------------------
+ *             Part Four: Function
+-*---------------------------------------------*/
+
+bool    log_start(Muselog *log, const char *logname, int facility);
+bool    flog(Muselog *log, int level, const char *fmt, ...);
+bool    vlog(Muselog *log, int level, const char *fmt, va_list ap);
+bool    log_move(Muselog *log, const char *save, int size);
 
 
