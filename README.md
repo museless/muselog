@@ -36,6 +36,8 @@ Just have four api.
 	bool vlog(Muselog *log, int level, const char *fmt, va_list ap);
 	bool log_move(Muselog *log, const char *save, int size);
 
+Upon successful completion, four api will return true. Otherwise, the functions shall return false and set errno to indicate the error.
+
 ### log_start
 Two previous params is easy to understand. **logname** normally save under /var/log. **facility** argument is used to specify what type of program is logging the message. This lib use LOCAL 1~7 to save user-define log. 
 
