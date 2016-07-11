@@ -49,6 +49,7 @@
 
 #define LOG_OPTION  (LOG_CONS)
 
+/* level for flog and vlog */
 #define EMERG       LOG_EMERG
 #define ALERT       LOG_ALERT
 #define CRIT        LOG_CRIT
