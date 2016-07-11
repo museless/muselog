@@ -24,6 +24,8 @@
  *             Part Zero: Include
 -*---------------------------------------------*/
 
+#pragma once
+
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdarg.h>
