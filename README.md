@@ -12,7 +12,7 @@ Linux only. C99/C++ library. Simple client for syslog-ng. Easy to write flexible
 	$ make [lib] or [example]
 
 ## About syslog-ng
-Opening muse.conf. You  can see this code.
+Opening muse.conf. You can see this code.
 	
 	template t_muse {
     	template("${S_DATE} musefs ${PROGRAM}[${PID}]: [${LEVEL}] ${MSG}\n"); template_escape(no);
@@ -20,7 +20,7 @@ Opening muse.conf. You  can see this code.
 
 Template is the place you define your message format.
 
-I use the next format because I can open it at vim and run filetype=messages to see more color.
+I use the next format because it can be opened via vim and run filetype=messages to see more color.
 
 	[date] [name] [program[pid]]: [message]
 
