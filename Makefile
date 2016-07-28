@@ -10,7 +10,7 @@ LIBO	= muselog.o
 LIB		= libmuselog.so
 
 # obj #
-OEXAM	= source/muselog.c source/example.c
+OEXAM	= source/muselog.c source/muselogmsg.c source/example.c
 
 OLIB	= source/muselog.c
 OLIBO	= muselog.o
