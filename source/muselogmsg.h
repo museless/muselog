@@ -40,7 +40,7 @@
 #define setmsg(msg, ...) \
         _setlog(&messageLog, msg, __FILE__, __func__, __LINE__, ##__VA_ARGS__)
 
-#define LFMT        "[%s - %s - %d] [%s: %s - %s]"
+#define LFMT        "[%s - %s - %d] [%s: %s [%s]]"
 
 #define DEF_CAUSE   "nocause"
 #define DEF_ERROR   "noerror"
